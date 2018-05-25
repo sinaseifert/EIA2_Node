@@ -1,9 +1,11 @@
-import * as Http from "http";
 import * as Url from "url";
+import * as Http from "http";
 
-namespace Server {
+namespace Node {
+    let studis: L04_Interfaces.Studis = {};
+
     interface AssocStringString {
-        [key: string]: string;
+        [key: string]: string | string[];
     }
 
     let port: number = process.env.PORT;
@@ -16,28 +18,31 @@ namespace Server {
     server.listen(port);
 
     function handleListen(): void {
-        console.log("Ich höre?");
+        console.log("Ich höre...");
     }
 
     function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
-        _response.setHeader("content-type", "text/html; charset=utf-8");
         _response.setHeader("Access-Control-Allow-Origin", "*");
-        console.log("Ich höre Stimmen!");
-        _response.write("Ich höre Stimmen!<br/>");
+        _response.setHeader("Access-Control-Request-Method", "*");
+
+        _response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
+        _response.setHeader("Access-Control-Allow-Headers", "*");
 
         let query: AssocStringString = Url.parse(_request.url, true).query;
-        let a: number = parseInt(query["a"]);
-        let b: number = parseInt(query["b"]);
-        
-        _response.write("Ich habe dich verstanden.<br/>");
 
-        for (let key in query){
-            console.log(query[key]);               
-            _response.write("Die eingebene Query-Information ist: "+ (query[key]) + "<br/>");
+        if (query["method"] == "addedStudent") {
+            console.log("addedStudent");
+            let student: L04_Interfaces.Studi = <L04_Interfaces.Studi>JSON.parse(query["matrikel"].toString());
+            studis[student.matrikel.toString()] = student;
+            _response.write("Student hinzugefügt");
+            _response.end();
         }
-        
-        _response.write("Das Ergebnis ist: " + (a + b));
 
-        _response.end();
+        if (query["method"] == "studentsRefresh") {
+            console.log("studentsRefresh");
+            _response.write(JSON.stringify(studis));
+            _response.end();
+        }
+        console.log("Ich habe geantwortet!");
     }
-}
+}          

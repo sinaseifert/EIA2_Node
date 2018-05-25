@@ -1,8 +1,9 @@
 "use strict";
-const Http = require("http");
 const Url = require("url");
-var Server;
-(function (Server) {
+const Http = require("http");
+var Node;
+(function (Node) {
+    let studis = {};
     let port = process.env.PORT;
     if (port == undefined)
         port = 8100;
@@ -11,23 +12,27 @@ var Server;
     server.addListener("request", handleRequest);
     server.listen(port);
     function handleListen() {
-        console.log("Ich höre?");
+        console.log("Ich höre...");
     }
     function handleRequest(_request, _response) {
-        _response.setHeader("content-type", "text/html; charset=utf-8");
         _response.setHeader("Access-Control-Allow-Origin", "*");
-        console.log("Ich höre Stimmen!");
-        _response.write("Ich höre Stimmen!<br/>");
+        _response.setHeader("Access-Control-Request-Method", "*");
+        _response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
+        _response.setHeader("Access-Control-Allow-Headers", "*");
         let query = Url.parse(_request.url, true).query;
-        let a = parseInt(query["a"]);
-        let b = parseInt(query["b"]);
-        _response.write("Ich habe dich verstanden.<br/>");
-        for (let key in query) {
-            console.log(query[key]);
-            _response.write("Die eingebene Query-Information ist: " + (query[key]) + "<br/>");
+        if (query["method"] == "addedStudent") {
+            console.log("addedStudent");
+            let student = JSON.parse(query["matrikel"].toString());
+            studis[student.matrikel.toString()] = student;
+            _response.write("Student hinzugefügt");
+            _response.end();
         }
-        _response.write("Das Ergebnis ist: " + (a + b));
-        _response.end();
+        if (query["method"] == "studentsRefresh") {
+            console.log("studentsRefresh");
+            _response.write(JSON.stringify(studis));
+            _response.end();
+        }
+        console.log("Ich habe geantwortet!");
     }
-})(Server || (Server = {}));
+})(Node || (Node = {}));
 //# sourceMappingURL=Server.js.map
