@@ -20,19 +20,19 @@ var Node;
         _response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
         _response.setHeader("Access-Control-Allow-Headers", "*");
         let query = Url.parse(_request.url, true).query;
+        _response.write("");
         if (query["method"] == "addedStudent") {
             console.log("addedStudent");
             let student = JSON.parse(query["matrikel"].toString());
             studis[student.matrikel.toString()] = student;
             _response.write("Student hinzugefügt");
-            _response.end();
         }
         if (query["method"] == "studentsRefresh") {
             console.log("studentsRefresh");
             _response.write(JSON.stringify(studis));
-            _response.end();
         }
         console.log("Ich habe geantwortet!");
+        _response.end();
     }
 })(Node || (Node = {}));
 //# sourceMappingURL=Server.js.map
