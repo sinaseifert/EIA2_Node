@@ -27,12 +27,22 @@ var Node;
             studis[student.matrikel.toString()] = student;
             _response.write("Student hinzugefügt");
         }
-        if (query["method"] == "studentsRefresh") {
+        else if (query["method"] == "studentsRefresh") {
             console.log("studentsRefresh");
             _response.write(JSON.stringify(studis));
         }
         console.log("Ich habe geantwortet!");
-        _response.end();
+        if (query["method"] == "searchStudent") {
+            let matrikel = query["matrikel"].substring(1, query["matrikel"].length - 1);
+            let student = studis[matrikel];
+            if (student != undefined) {
+                _response.write(JSON.stringify(student));
+            }
+            else {
+                _response.write("undefined");
+            }
+            _response.end();
+        }
     }
 })(Node || (Node = {}));
 //# sourceMappingURL=Server.js.map
