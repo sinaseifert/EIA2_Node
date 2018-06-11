@@ -19,10 +19,11 @@ var Node;
         console.log("Request received");
         let query = Url.parse(_request.url, true).query;
         let command = query["command"].toString();
+        let student;
         switch (command) {
             case "addStudent":
                 console.log("addStudent");
-                let student = JSON.parse(query["data"].toString());
+                student = JSON.parse(query["data"].toString());
                 studis[student.matrikel.toString()] = student;
                 respond(_response, "Student hinzugefügt");
                 break;
@@ -33,9 +34,10 @@ var Node;
             case "searchStudent":
                 console.log("searchStudent");
                 let matrikel = query["data"].toString();
-                let students = studis[matrikel];
-                if (students != undefined) {
-                    respond(_response, JSON.stringify(studis[matrikel]));
+                student = studis[matrikel];
+                console.log(student);
+                if (student != undefined) {
+                    respond(_response, JSON.stringify(student));
                 }
                 else {
                     respond(_response, "Keine passenden Informationen gefunden!");

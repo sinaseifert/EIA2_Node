@@ -29,11 +29,12 @@ namespace Node {
         console.log("Request received");
         let query: AssocStringString = Url.parse(_request.url, true).query;
         let command: string = query["command"].toString();
+        let student: L04_Interfaces.Studi;
 
         switch (command) {
             case "addStudent":
                 console.log("addStudent");
-                let student: L04_Interfaces.Studi = <L04_Interfaces.Studi>JSON.parse(query["data"].toString());
+                student = <L04_Interfaces.Studi>JSON.parse(query["data"].toString());
                 studis[student.matrikel.toString()] = student;
                 respond(_response, "Student hinzugefügt");
                 break;
@@ -44,9 +45,10 @@ namespace Node {
             case "searchStudent":
                 console.log("searchStudent");
                 let matrikel: string = query["data"].toString();
-                let students: L04_Interfaces.Studi = studis[matrikel];
-                if (students != undefined) {
-                    respond(_response, JSON.stringify(studis[matrikel]));
+                student = studis[matrikel];
+                console.log(student);
+                if (student != undefined) {
+                    respond(_response, JSON.stringify(student));
                 } else {
                     respond(_response, "Keine passenden Informationen gefunden!");
                 }
@@ -59,8 +61,8 @@ namespace Node {
 
     function respond(_response: Http.ServerResponse, _text: string): void {
         //console.log("Preparing response: " + _text);
-//        _response.setHeader("Access-Control-Request-Method", "*");
-//        _response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
+        //        _response.setHeader("Access-Control-Request-Method", "*");
+        //        _response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
         _response.setHeader("Access-Control-Allow-Origin", "*");
         _response.setHeader("content-type", "text/html; charset=utf-8");
         _response.write(_text);
