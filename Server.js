@@ -1,87 +1,54 @@
+/**
+ * Simple server managing between client and database
+ * @author: Jirka Dell'Oro-Friedl
+ */
 "use strict";
-const Url = require("url");
 const Http = require("http");
-var Node;
-(function (Node) {
-    let studiHomoAssoc = {};
-    let port = process.env.PORT;
-    if (port == undefined)
-        port = 8100;
-    let server = Http.createServer();
-    server.addListener("listening", handleListen);
-    server.addListener("request", handleRequest);
-    server.addListener("request", respond);
-    server.listen(port);
-    function handleListen() {
-        console.log("Ich höre...");
+const Url = require("url");
+const Database = require("./Database");
+console.log("Server starting");
+let port = process.env.PORT;
+if (port == undefined)
+    port = 8100;
+let server = Http.createServer();
+server.addListener("listening", handleListen);
+server.addListener("request", handleRequest);
+server.listen(port);
+function handleListen() {
+    console.log("Listening on port: " + port);
+}
+function handleRequest(_request, _response) {
+    console.log("Request received");
+    let query = Url.parse(_request.url, true).query;
+    var command = query["command"];
+    switch (command) {
+        case "insert":
+            let student = {
+                name: query["name"],
+                firstname: query["firstname"],
+                matrikel: parseInt(query["matrikel"]),
+                age: parseInt(query["age"]),
+                gender: Boolean(query["gender"]),
+                courseOfStudies: query["courseOfStudies"]
+            };
+            Database.insert(student);
+            respond(_response, "storing data");
+            break;
+        case "refresh":
+            Database.findAll(function (json) {
+                respond(_response, json);
+            });
+            break;
+        default:
+            respond(_response, "unknown command: " + command);
+            break;
     }
-    function handleRequest(_request, _response) {
-        let query = Url.parse(_request.url, true).query;
-        if (query["method"]) {
-            switch (query["method"]) {
-                case "insert":
-                    insert(query, _response);
-                    break;
-                case "refresh":
-                    refresh(_response);
-                    break;
-                case "search":
-                    search(query, _response);
-                    break;
-                default:
-                    respond(_response, "Fehler aufgetreten");
-            }
-        }
-        _response.end();
-    }
-    function insert(query, _response) {
-        let student = JSON.parse(query["matrikel"].toString());
-        let name = student.name;
-        let firstname = student.firstname;
-        let matrikel = student.matrikel.toString();
-        let age = student.age;
-        let gender = student.gender;
-        let courseOfStudies = student.courseOfStudies;
-        let studis;
-        studis = {
-            name: name,
-            firstname: firstname,
-            matrikel: parseInt(matrikel),
-            age: age,
-            gender: gender,
-            courseOfStudies: courseOfStudies
-        };
-        studiHomoAssoc[matrikel] = studis;
-        _response.write("addedStudent");
-    }
-    function refresh(_response) {
-        for (let matrikel in studiHomoAssoc) {
-            let studi = studiHomoAssoc[matrikel];
-            let line = matrikel + ":";
-            line += studi.name + ", " + studi.firstname + ", " + studi.age + " Jahre ";
-            line += studi.gender ? "(M)" : "(F)" + ", ";
-            line += studi.courseOfStudies;
-            _response.write(line + "\n");
-        }
-    }
-    function search(query, _response) {
-        let studi = studiHomoAssoc[query["searchStudent"].toString()];
-        if (studi) {
-            let line = query["searchStudent"] + ":";
-            line += studi.name + ", " + studi.firstname + ", " + studi.age + " Jahre ";
-            line += studi.gender ? "(M)" : "(F)" + ", ";
-            line += studi.courseOfStudies;
-            _response.write(line);
-        }
-        else {
-            _response.write("Keine passenden Informationen gefunden.");
-        }
-    }
-    function respond(_response, _text) {
-        _response.setHeader("Access-Control-Allow-Origin", "*");
-        _response.setHeader("content-type", "text/html; charset=utf-8");
-        _response.write(_text);
-        _response.end();
-    }
-})(Node || (Node = {}));
+}
+function respond(_response, _text) {
+    //console.log("Preparing response: " + _text);
+    _response.setHeader("Access-Control-Allow-Origin", "*");
+    _response.setHeader("content-type", "text/html; charset=utf-8");
+    _response.write(_text);
+    _response.end();
+}
 //# sourceMappingURL=Server.js.map
