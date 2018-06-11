@@ -2,26 +2,13 @@ import * as Url from "url";
 import * as Http from "http";
 
 namespace Node {
-    /*Mit dem eingebunden Namespace wo die Interfaces drin sind, hat die Verlinkung scheinbar nichts funktioniert.
-    Das Interface Studi wurde nicht erkannt, daher habe ich das noch einmal hier eingefügt.*/
-    interface Studi {
-        name: string;
-        firstname: string;
-        matrikel: number;
-        age: number;
-        gender: boolean;
-        courseOfStudies: string;
-    }
+    console.log("Server starting");
 
-    // Struktur des homogenen assoziativen Arrays, bei dem ein Datensatz der Matrikelnummer zugeordnet ist
-    interface Studis {
-         [matrikel: string]: Studi;
-    }
-    
+    let studis: L04_Interfaces.Studis = {};
+
     interface AssocStringString {
         [key: string]: string | string[];
     }
-    let studiHomoAssoc: Studis = {};
 
     let port: number = process.env.PORT;
     if (port == undefined)
@@ -30,87 +17,54 @@ namespace Node {
     let server: Http.Server = Http.createServer();
     server.addListener("listening", handleListen);
     server.addListener("request", handleRequest);
-    server.addListener("request", respond);
     server.listen(port);
 
+
+
     function handleListen(): void {
-        console.log("Ich höre...");
+        console.log("Listening on port: " + port);
     }
 
     function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): void {
-
+        console.log("Request received");
         let query: AssocStringString = Url.parse(_request.url, true).query;
+        let command: string = query["command"].toString();
 
-        if (query["method"]) {
-            switch (query["method"]) {
-                case "insert":
-                    insert(query, _response);
-                    break;
-                case "refresh":
-                    refresh(_response);
-                    break;
-                case "search":
-                    search(query, _response);
-                    break;
-                default: 
-                    respond(_response, "Fehler aufgetreten");
-            }
-        }
-        _response.end();
-    }
-
-    function insert(query: AssocStringString, _response: Http.ServerResponse): void {
-        let student: Studi = JSON.parse(query["matrikel"].toString());
-        let name: string = student.name;
-        let firstname: string = student.firstname;
-        let matrikel: string = student.matrikel.toString();
-        let age: number = student.age;
-        let gender: boolean = student.gender;
-        let courseOfStudies: string = student.courseOfStudies;
-
-        let studis: Studi;
-
-        studis = {
-            name: name,
-            firstname: firstname,
-            matrikel: parseInt(matrikel),
-            age: age,
-            gender: gender,
-            courseOfStudies: courseOfStudies
-        };
-
-        studiHomoAssoc[matrikel] = studis;
-        _response.write("addedStudent");
-    }
-
-    function refresh(_response: Http.ServerResponse): void {
-        for (let matrikel in studiHomoAssoc) {
-            let studi: Studi = studiHomoAssoc[matrikel];
-            let line: string = matrikel + ":";
-            line += studi.name + ", " + studi.firstname + ", " + studi.age + " Jahre ";
-            line += studi.gender ? "(M)" : "(F)" + ", ";
-            line += studi.courseOfStudies;
-            _response.write(line + "\n");
+        switch (command) {
+            case "addStudent":
+                console.log("addStudent");
+                let student: L04_Interfaces.Studi = <L04_Interfaces.Studi>JSON.parse(query["data"].toString());
+                studis[student.matrikel.toString()] = student;
+                respond(_response, "Student hinzugefügt");
+                break;
+            case "studentsRefresh":
+                console.log("studentsRefresh");
+                respond(_response, JSON.stringify(studis));
+                break;
+            case "searchStudent":
+                console.log("searchStudent");
+                let matrikel: string = query["data"].toString();
+                let students: L04_Interfaces.Studi = studis[matrikel];
+                if (students != undefined) {
+                    respond(_response, JSON.stringify(studis[matrikel]));
+                } else {
+                    respond(_response, "Keine passenden Informationen gefunden!");
+                }
+                break;
+            default:
+                respond(_response, "unknown command: " + command);
+                break;
         }
     }
 
-    function search(query: AssocStringString, _response: Http.ServerResponse): void {
-        let studi: Studi = studiHomoAssoc[query["searchStudent"].toString()];
-        if (studi) {
-            let line: string = query["searchStudent"] + ":";
-            line += studi.name + ", " + studi.firstname + ", " + studi.age + " Jahre ";
-            line += studi.gender ? "(M)" : "(F)" + ", ";
-            line += studi.courseOfStudies;
-            _response.write(line);
-        } else {
-            _response.write("Keine passenden Informationen gefunden.");
-        }
-    }
-    
     function respond(_response: Http.ServerResponse, _text: string): void {
+        //console.log("Preparing response: " + _text);
+//        _response.setHeader("Access-Control-Request-Method", "*");
+//        _response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
         _response.setHeader("Access-Control-Allow-Origin", "*");
         _response.setHeader("content-type", "text/html; charset=utf-8");
         _response.write(_text);
+        console.log("Ich habe geantwortet!");
         _response.end();
-    }    
+    }
 }
