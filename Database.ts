@@ -8,7 +8,7 @@ console.log("Database starting");
 let databaseURL: string = "mongodb://localhost:27017";
 let databaseName: string = "database_mongodb";
 let db: Mongo.Db;
-let students: Mongo.Collection;
+let database_mongodb: Mongo.Collection;
 
 // wenn wir auf heroku sind...
 if (process.env.NODE_ENV == "production") {
@@ -27,12 +27,12 @@ function handleConnect(_e: Mongo.MongoError, _db: Mongo.Db): void {
     else {
         console.log("Connected to database!");
         db = _db.db(databaseName);
-        students = db.collection("students");
+        database_mongodb = db.collection("students");
     }
 }
 
 export function insert(_doc: StudentData): void {
-    students.insertOne(_doc, handleInsert);
+    database_mongodb.insertOne(_doc, handleInsert);
 }
 
 function handleInsert(_e: Mongo.MongoError): void {
@@ -41,7 +41,7 @@ function handleInsert(_e: Mongo.MongoError): void {
 
 
 export function findAll(_callback: Function): void {
-    var cursor: Mongo.Cursor = students.find();
+    var cursor: Mongo.Cursor = database_mongodb.find();
     cursor.toArray(prepareAnswer);
 
     function prepareAnswer(_e: Mongo.MongoError, studentArray: StudentData[]): void {
@@ -53,13 +53,18 @@ export function findAll(_callback: Function): void {
 }
 
 export function find(_callback: Function, matrikel: number): void {
-    var cursor: Mongo.Cursor = students.find({"matrikel": matrikel});
+    var cursor: Mongo.Cursor = database_mongodb.find({ "matrikel": matrikel });
     cursor.toArray(prepareAnswer);
-    
-    function prepareAnswer(_e: Mongo.MongoError, studentArray: StudentData[]): void {
+
+    function prepareAnswer(_e: Mongo.MongoError, _matrikel: StudentData[]): void {
         if (_e)
-            _callback("Error" + _e);
-        else
-            _callback(JSON.stringify(studentArray[matrikel]));
+            _callback("Error" + _e, false);
+        else {
+            if (_matrikel.length >= 1) {
+                _callback(JSON.stringify(_matrikel[0]), true);
+            }
+
+            //            _callback(JSON.stringify(studentArray[matrikel]));
+        }
     }
 }

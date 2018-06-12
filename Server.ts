@@ -7,7 +7,7 @@ import * as Http from "http";
 import * as Url from "url";
 import * as Database from "./Database";
 
-console.log("Server starting");
+console.log("Server tarting");
 
 let port: number = process.env.PORT;
 if (port == undefined)
@@ -39,24 +39,26 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
                 gender: Boolean(query["gender"]),
                 courseOfStudies: query["courseOfStudies"]
             };
-            _response.write("addStudent");
-//            Database.insert(student);
-//            respond(_response, "storing data");
+            //            _response.write("addStudent");
+            Database.insert(student);
+            respond(_response, "storing data");
             break;
         case "refresh":
-            _response.write(Database.findAll);
-//            Database.findAll(function(json: string): void {
-//                respond(_response, json);
-//            });
+            //            _response.write(Database.findAll);
+            Database.findAll(function(json: string): void {
+                respond(_response, json);
+            });
             break;
         case "find":
-            let matrikel: string = JSON.parse(query["matrikel"].toString());
-            _response.write(Database.find(matrikel));
-//            Database.find(matrikel);
-//            respond(_response, "Matrikel:");
-//            Database.find(function(json: string): void {
-//                respond(_response, json);
-//            });
+            Database.find(function(studet: string, proofe: boolean): void {
+                if (proofe) {
+                    _response.write(student);
+                    _response.end();
+                }
+                else
+                    console.log(student);
+            }, 
+                parseInt(query["data"]))
             break;
         default:
             respond(_response, "unknown command: " + command);

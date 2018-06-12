@@ -8,7 +8,7 @@ console.log("Database starting");
 let databaseURL = "mongodb://localhost:27017";
 let databaseName = "database_mongodb";
 let db;
-let students;
+let database_mongodb;
 // wenn wir auf heroku sind...
 if (process.env.NODE_ENV == "production") {
     //    databaseURL = "mongodb://username:password@hostname:port/database";
@@ -23,18 +23,18 @@ function handleConnect(_e, _db) {
     else {
         console.log("Connected to database!");
         db = _db.db(databaseName);
-        students = db.collection("students");
+        database_mongodb = db.collection("students");
     }
 }
 function insert(_doc) {
-    students.insertOne(_doc, handleInsert);
+    database_mongodb.insertOne(_doc, handleInsert);
 }
 exports.insert = insert;
 function handleInsert(_e) {
     console.log("Database insertion returned -> " + _e);
 }
 function findAll(_callback) {
-    var cursor = students.find();
+    var cursor = database_mongodb.find();
     cursor.toArray(prepareAnswer);
     function prepareAnswer(_e, studentArray) {
         if (_e)
@@ -45,13 +45,16 @@ function findAll(_callback) {
 }
 exports.findAll = findAll;
 function find(_callback, matrikel) {
-    var cursor = students.find({ "matrikel": matrikel });
+    var cursor = database_mongodb.find({ "matrikel": matrikel });
     cursor.toArray(prepareAnswer);
-    function prepareAnswer(_e, studentArray) {
+    function prepareAnswer(_e, _matrikel) {
         if (_e)
-            _callback("Error" + _e);
-        else
-            _callback(JSON.stringify(studentArray[matrikel]));
+            _callback("Error" + _e, false);
+        else {
+            if (_matrikel.length >= 1) {
+                _callback(JSON.stringify(_matrikel[0]), true);
+            }
+        }
     }
 }
 exports.find = find;

@@ -6,7 +6,7 @@
 const Http = require("http");
 const Url = require("url");
 const Database = require("./Database");
-console.log("Server starting");
+console.log("Server tarting");
 let port = process.env.PORT;
 if (port == undefined)
     port = 8100;
@@ -31,13 +31,25 @@ function handleRequest(_request, _response) {
                 gender: Boolean(query["gender"]),
                 courseOfStudies: query["courseOfStudies"]
             };
+            //            _response.write("addStudent");
             Database.insert(student);
             respond(_response, "storing data");
             break;
         case "refresh":
+            //            _response.write(Database.findAll);
             Database.findAll(function (json) {
                 respond(_response, json);
             });
+            break;
+        case "find":
+            Database.find(function (studet, proofe) {
+                if (proofe) {
+                    _response.write(student);
+                    _response.end();
+                }
+                else
+                    console.log(student);
+            }, parseInt(query["data"]));
             break;
         default:
             respond(_response, "unknown command: " + command);
