@@ -69,10 +69,8 @@ export function find(_callback: Function, matrikel: number): void {
             _callback("Error" + _e);
         if (student) {
             console.log(JSON.stringify(student))
-            let line: string = student.matrikel + ":" + student.name + "," + student.firstname + ","
-                + student.age + "," + student.gender ? "male" : "female" + "," + student.courseOfStudies;
-            console.log(line);
-            _callback(line); 
+            
+            _callback(buildResponseString(student)); 
         }
         else {
             _callback("Keine Informationen gefunden!");
@@ -81,4 +79,8 @@ export function find(_callback: Function, matrikel: number): void {
             //            _callback(JSON.stringify(studentArray[matrikel]));
     }
     
+}
+
+function buildResponseString(student: StudentData): string {
+    return student.matrikel + ": " + student.name + ", " + student.firstname + ", Alter: " + student.age + ", Studiengang: " + student.courseOfStudies + ", Geschlecht: " + student.gender ? "Männlich" : "Weiblich";    
 }

@@ -60,10 +60,7 @@ function find(_callback, matrikel) {
             _callback("Error" + _e);
         if (student) {
             console.log(JSON.stringify(student));
-            let line = student.matrikel + ":" + student.name + "," + student.firstname + ","
-                + student.age + "," + student.gender ? "male" : "female" + "," + student.courseOfStudies;
-            console.log(line);
-            _callback(line);
+            _callback(buildResponseString(student));
         }
         else {
             _callback("Keine Informationen gefunden!");
@@ -72,4 +69,7 @@ function find(_callback, matrikel) {
     }
 }
 exports.find = find;
+function buildResponseString(student) {
+    return student.matrikel + ": " + student.name + ", " + student.firstname + ", Alter: " + student.age + ", Studiengang: " + student.courseOfStudies + ", Geschlecht: " + student.gender ? "M�nnlich" : "Weiblich";
+}
 //# sourceMappingURL=Database.js.map
