@@ -42,7 +42,7 @@ function handleRequest(_request, _response) {
             });
             break;
         case "find":
-            Database.find(function (studet, proof) {
+            Database.find(function (student, proof) {
                 if (proof) {
                     _response.write(student);
                     _response.end();

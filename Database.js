@@ -39,15 +39,16 @@ function findAll(_callback) {
     function prepareAnswer(_e, studentArray) {
         if (_e)
             _callback("Error" + _e);
-        else {
-            let line = "";
-            for (let i = 0; i < studentArray.length; i++) {
-                line += studentArray[i].matrikel + ":" + studentArray[i].name + "," + studentArray[i].firstname + ",";
-                line += studentArray[i].age + "," + studentArray[i].gender ? "male" : "female" + "," + studentArray[i].courseOfStudies + ",";
-                line += "\n";
-            }
-            _callback(line);
-        }
+        else
+            //            let line: string = "";
+            //            for (let i: number = 0; i < studentArray.length; i++) {
+            //                line += studentArray[i].matrikel + ":" + studentArray[i].name + "," + studentArray[i].firstname + ",";
+            //                line += studentArray[i].age + "," + studentArray[i].gender ? "male" : "female" + "," + studentArray[i].courseOfStudies + ",";
+            //                line += "\n";
+            //            }
+            //            _callback(line);
+            _callback(JSON.stringify(studentArray));
+        //}
     }
 }
 exports.findAll = findAll;
