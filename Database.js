@@ -23,7 +23,7 @@ function handleConnect(_e, _db) {
     else {
         console.log("Connected to database!");
         db = _db.db(databaseName);
-        database_mongodb = db.collection("students");
+        database_mongodb = db.collection("database_mongodb");
     }
 }
 function insert(_doc) {
