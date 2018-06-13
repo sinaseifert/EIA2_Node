@@ -60,7 +60,7 @@ function find(_callback, matrikel) {
             _callback("Error" + _e);
         if (student) {
             console.log(JSON.stringify(student));
-            _callback(buildResponseString(student));
+            _callback(JSON.stringify(student));
         }
         else {
             _callback("Keine Informationen gefunden!");
