@@ -39,15 +39,15 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
                 gender: Boolean(query["gender"]),
                 courseOfStudies: query["courseOfStudies"]
             };
-              _response.write("addStudent");
-//            Database.insert(student);
-//            respond(_response, "storing data");
+            //            _response.write("addStudent");
+            Database.insert(student);
+            respond(_response, "storing data");
             break;
         case "refresh":
-              _response.write(Database.findAll);
-//            Database.findAll(function(json: string): void {
-//                respond(_response, json);
-//            });
+            //            _response.write(Database.findAll);
+            Database.findAll(function(json: string): void {
+                respond(_response, json);
+            });
             break;
         case "find":
             Database.find(function(student: string, proof: boolean): void {
@@ -58,7 +58,7 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
                 else
                     console.log(student);
             }, 
-                parseInt(query["data"]))
+                parseInt(query["student"]))
             break;
         default:
             respond(_response, "unknown command: " + command);
