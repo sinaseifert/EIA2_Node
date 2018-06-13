@@ -47,8 +47,16 @@ export function findAll(_callback: Function): void {
     function prepareAnswer(_e: Mongo.MongoError, studentArray: StudentData[]): void {
         if (_e)
             _callback("Error" + _e);
-        else
-            _callback(JSON.stringify(studentArray));
+        else {
+            let line: string = "";
+            for (let i: number = 0; i < studentArray.length; i++) {
+                line += studentArray[i].matrikel + ":" + studentArray[i].name + "," + studentArray[i].firstname + ",";
+                line += studentArray[i].age + "," + studentArray[i].gender ? "male" : "female" + "," + studentArray[i].courseOfStudies + ",";
+                line += "\n";
+            }
+            _callback(line);
+            //            _callback(JSON.stringify(studentArray));
+        }
     }
 }
 

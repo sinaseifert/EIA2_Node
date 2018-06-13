@@ -50,8 +50,8 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
             });
             break;
         case "find":
-            Database.find(function(studet: string, proofe: boolean): void {
-                if (proofe) {
+            Database.find(function(studet: string, proof: boolean): void {
+                if (proof) {
                     _response.write(student);
                     _response.end();
                 }

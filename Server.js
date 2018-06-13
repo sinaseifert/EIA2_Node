@@ -42,8 +42,8 @@ function handleRequest(_request, _response) {
             });
             break;
         case "find":
-            Database.find(function (studet, proofe) {
-                if (proofe) {
+            Database.find(function (studet, proof) {
+                if (proof) {
                     _response.write(student);
                     _response.end();
                 }
