@@ -31,14 +31,14 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
 
     switch (command) {
         case "insert":
-//            let student: StudentData = {
-//                name: query["name"],
-//                firstname: query["firstname"],
-//                matrikel: parseInt(query["matrikel"]),
-//                age: parseInt(query["age"]),
-//                gender: Boolean(query["gender"]),
-//                courseOfStudies: query["courseOfStudies"]
-//            };
+            let student: StudentData = {
+                name: query["name"],
+                firstname: query["firstname"],
+                matrikel: parseInt(query["matrikel"]),
+                age: parseInt(query["age"]),
+                gender: Boolean(query["gender"]),
+                courseOfStudies: query["courseOfStudies"]
+            };
               _response.write("addStudent");
 //            Database.insert(student);
 //            respond(_response, "storing data");
