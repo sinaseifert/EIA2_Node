@@ -53,16 +53,20 @@ function findAll(_callback) {
 }
 exports.findAll = findAll;
 function find(_callback, matrikel) {
-    var cursor = database_mongodb.find({ "matrikel": matrikel });
-    cursor.toArray(prepareAnswer);
-    function prepareAnswer(_e, _matrikel) {
+    var cursor = database_mongodb.find({ "matrikel": matrikel }).limit(1);
+    cursor.next(prepareAnswer);
+    function prepareAnswer(_e, student) {
         if (_e)
-            _callback("Error" + _e, false);
-        else {
-            if (_matrikel.length >= 1) {
-                _callback(JSON.stringify(_matrikel[0]), true);
-            }
+            _callback("Error" + _e);
+        if (student) {
+            let line = student.matrikel + ":" + student.name + "," + student.firstname + ",";
+            line += student.age + "," + student.gender ? "male" : "female" + "," + student.courseOfStudies;
+            _callback(line);
         }
+        else {
+            _callback("Keine Informationen gefunden!");
+        }
+        //            _callback(JSON.stringify(studentArray[matrikel]));
     }
 }
 exports.find = find;

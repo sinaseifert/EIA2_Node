@@ -61,18 +61,22 @@ export function findAll(_callback: Function): void {
 }
 
 export function find(_callback: Function, matrikel: number): void {
-    var cursor: Mongo.Cursor = database_mongodb.find({ "matrikel": matrikel });
-    cursor.toArray(prepareAnswer);
+    var cursor: Mongo.Cursor = database_mongodb.find({ "matrikel": matrikel }).limit(1);
+    cursor.next(prepareAnswer);
 
-    function prepareAnswer(_e: Mongo.MongoError, _matrikel: StudentData[]): void {
+    function prepareAnswer(_e: Mongo.MongoError, student: StudentData): void {
         if (_e)
-            _callback("Error" + _e, false);
+            _callback("Error" + _e);
+        if (student) {
+            let line: string = student.matrikel + ":" + student.name + "," + student.firstname + ",";
+            line += student.age + "," + student.gender ? "male" : "female" + "," + student.courseOfStudies;
+            _callback(line); 
+        }
         else {
-            if (_matrikel.length >= 1) {
-                _callback(JSON.stringify(_matrikel[0]), true);
-            }
+            _callback("Keine Informationen gefunden!");
+        }
 
             //            _callback(JSON.stringify(studentArray[matrikel]));
-        }
     }
+    
 }

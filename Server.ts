@@ -50,16 +50,13 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
             });
             break;
         case "find":
-            Database.find(function(student: string, proof: boolean): void {
-                if (proof) {
-                    _response.write(student);
-                    _response.end();
-                }
-                else
-                    console.log(student);
-            }, 
-                parseInt(query["student"]))
+            let matrikel: string = JSON.parse(query["matrikel"].toString());
+            _response.write(Database.find(matrikel));
+//            Database.find(matrikel);
+//            respond(_response, );
+
             break;
+            
         default:
             respond(_response, "unknown command: " + command);
             break;
