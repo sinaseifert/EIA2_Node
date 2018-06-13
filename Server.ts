@@ -51,9 +51,9 @@ function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerRes
             break;
         case "find":
             let matrikel: string = JSON.parse(query["matrikel"].toString());
-            _response.write(Database.find(matrikel));
-//            Database.find(matrikel);
-//            respond(_response, );
+            Database.find(function (student: string):void {
+                respond(_response, student);
+            }, parseInt(matrikel))
 
             break;
             

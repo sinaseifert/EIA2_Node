@@ -42,14 +42,10 @@ function handleRequest(_request, _response) {
             });
             break;
         case "find":
-            Database.find(function (student, proof) {
-                if (proof) {
-                    _response.write(student);
-                    _response.end();
-                }
-                else
-                    console.log(student);
-            }, parseInt(query["student"]));
+            let matrikel = JSON.parse(query["matrikel"].toString());
+            Database.find(function (student) {
+                respond(_response, student);
+            }, parseInt(matrikel));
             break;
         default:
             respond(_response, "unknown command: " + command);
