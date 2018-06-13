@@ -23,23 +23,23 @@ function handleRequest(_request, _response) {
     var command = query["command"];
     switch (command) {
         case "insert":
-            let student = {
-                name: query["name"],
-                firstname: query["firstname"],
-                matrikel: parseInt(query["matrikel"]),
-                age: parseInt(query["age"]),
-                gender: Boolean(query["gender"]),
-                courseOfStudies: query["courseOfStudies"]
-            };
-            //            _response.write("addStudent");
-            Database.insert(student);
-            respond(_response, "storing data");
+            //            let student: StudentData = {
+            //                name: query["name"],
+            //                firstname: query["firstname"],
+            //                matrikel: parseInt(query["matrikel"]),
+            //                age: parseInt(query["age"]),
+            //                gender: Boolean(query["gender"]),
+            //                courseOfStudies: query["courseOfStudies"]
+            //            };
+            _response.write("addStudent");
+            //            Database.insert(student);
+            //            respond(_response, "storing data");
             break;
         case "refresh":
-            //            _response.write(Database.findAll);
-            Database.findAll(function (json) {
-                respond(_response, json);
-            });
+            _response.write(Database.findAll);
+            //            Database.findAll(function(json: string): void {
+            //                respond(_response, json);
+            //            });
             break;
         case "find":
             Database.find(function (student, proof) {
