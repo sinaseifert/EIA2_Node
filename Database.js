@@ -59,8 +59,10 @@ function find(_callback, matrikel) {
         if (_e)
             _callback("Error" + _e);
         if (student) {
-            let line = student.matrikel + ":" + student.name + "," + student.firstname + ",";
-            line += student.age + "," + student.gender ? "male" : "female" + "," + student.courseOfStudies;
+            console.log(JSON.stringify(student));
+            let line = student.matrikel + ":" + student.name + "," + student.firstname + ","
+                + student.age + "," + student.gender ? "male" : "female" + "," + student.courseOfStudies;
+            console.log(line);
             _callback(line);
         }
         else {
